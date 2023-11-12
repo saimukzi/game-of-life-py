@@ -1,0 +1,18 @@
+# use python3.11 from python.org
+# python3.12 is not supported by pygame # https://pypi.org/project/pygame/
+# python3.12 is not supported by cupy # https://pypi.org/project/cupy/
+
+# using CUDA 12.1, supported by CuPy 12.2
+#  - https://docs.cupy.dev/en/v12.2.0/install.html
+#  - https://github.com/cupy/cupy/issues/7776
+
+# numpy 1.24, supported by CuPy 12.2
+#  - https://docs.cupy.dev/en/v12.2.0/install.html
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+python -m venv venv
+venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip wheel setuptools
+python -m pip install --upgrade pygame numpy<1.25
+python -m pip install --upgrade cupy-cuda12x
