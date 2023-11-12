@@ -3,6 +3,7 @@
 # python3.12 is not supported by cupy # https://pypi.org/project/cupy/
 
 # using CUDA 12.1, supported by CuPy 12.2
+# CUDA 12.2 is not supported by CuPy 12.2 on Windows
 #  - https://docs.cupy.dev/en/v12.2.0/install.html
 #  - https://github.com/cupy/cupy/issues/7776
 
