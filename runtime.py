@@ -11,7 +11,7 @@ import time
 import timer_pool
 import traceback
 
-FPS = 60
+FPS = 30
 TPS = 10
 
 SCREEN_WIDTH = 1280
