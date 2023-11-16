@@ -37,7 +37,7 @@ obs_process = subprocess.Popen([config['OBS_PATH'], '--minimize-to-tray', '--dis
 common.write_process_info(os.path.join(WORK_PATH, 'obs_process_data.json'), obs_process)
 
 # start streaming
-cl = obs.ReqClient(host='localhost', port=config['OBS_WEBSOCKET_PORT'], password=config['OBS_WEBSOCKET_PASSWORD'])
+cl = obs.ReqClient(host='localhost', port=config['OBS_WEBSOCKET_PORT'], password=config['OBS_WEBSOCKET_PASSWORD'], timeout=60)
 cl.send(
     "SetStreamServiceSettings",
     data={
