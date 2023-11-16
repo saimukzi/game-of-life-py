@@ -18,10 +18,14 @@ def write_str(path, txt):
         f.write(txt)
 
 def write_process_info(process_data_path, process):
-    process_psu = psutil.Process(process.pid)
+    process_data = get_process_data(process.pid)
+    write_json(process_data_path, process_data)
+
+def get_process_data(process_pid):
+    process_psu = psutil.Process(process_pid)
     with process_psu.oneshot():
         process_data = {
-            'PID': process.pid,
+            'PID': process_pid,
             'PPID': process_psu.ppid(),
             'NAME': process_psu.name(),
             'CMDLINE': process_psu.cmdline(),
@@ -29,4 +33,4 @@ def write_process_info(process_data_path, process):
             'EXE': process_psu.exe(),
             'CWD': process_psu.cwd(),
         }
-    write_json(process_data_path, process_data)
+    return process_data
