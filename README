@@ -17,3 +17,4 @@ venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip wheel setuptools
 python -m pip install --upgrade pygame numpy<1.25
 python -m pip install --upgrade cupy-cuda12x
+python -m pip install --upgrade pyaudio
