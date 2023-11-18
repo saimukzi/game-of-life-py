@@ -20,6 +20,8 @@ MY_PID = os.getpid()
 config = config_input.get_config()
 WORK_PATH = config['WORK_PATH']
 
+os.makedirs(WORK_PATH, exist_ok=True)
+
 if not config.get('ENABLE', True):
     exit()
 

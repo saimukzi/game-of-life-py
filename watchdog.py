@@ -24,6 +24,8 @@ config = config_input.get_config()
 WORK_PATH = config['WORK_PATH']
 ENABLE_REBOOT = config.get('ENABLE_REBOOT', False)
 
+os.makedirs(WORK_PATH, exist_ok=True)
+
 logging.basicConfig(
     filename=os.path.join(WORK_PATH, f'watchdog.{NOW_YYYYMMDD}.log'),
     format='%(asctime)s %(levelname)-8s %(message)s',
