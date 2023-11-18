@@ -13,6 +13,10 @@ def write_json(path, data):
     with open(path, 'w') as f:
         json.dump(data, f, indent=4)
 
+def read_str(path):
+    with open(path, 'rt', encoding='utf-8') as f:
+        return f.read()
+
 def write_str(path, txt):
     with open(path, 'wt', encoding='utf-8') as f:
         f.write(txt)
