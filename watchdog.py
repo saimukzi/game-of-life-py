@@ -140,6 +140,10 @@ try:
 except Exception as e:
     logging.exception(e)
 
+# log watchdog end time
+watchdog_end_timestamp_path = os.path.join(WORK_PATH, 'watchdog_end_timestamp.txt')
+common.write_str(watchdog_end_timestamp_path, str(NOW))
+
 # restart windows
 try:
     if ENABLE_REBOOT:
