@@ -1,4 +1,5 @@
 import json
+import os
 
 import psutil
 
@@ -10,6 +11,7 @@ def read_json(path):
         return json.load(f)
 
 def write_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w') as f:
         json.dump(data, f, indent=4)
 
@@ -18,10 +20,12 @@ def read_str(path):
         return f.read()
 
 def write_str(path, txt):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wt', encoding='utf-8') as f:
         f.write(txt)
 
 def write_process_info(process_data_path, process):
+    os.makedirs(os.path.dirname(process_data_path), exist_ok=True)
     process_data = get_process_data(process.pid)
     write_json(process_data_path, process_data)
 
