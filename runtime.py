@@ -183,6 +183,12 @@ class Runtime:
             for yy in range(y_offset_int, SCREEN_HEIGHT, CELL_SIZE*MAP_SIZE):
                 self.screen.blit(self.map_surface, (xx,yy))
 
+        # for xx in range(x_offset_int, SCREEN_WIDTH, CELL_SIZE*MAP_SIZE):
+        #     self.screen.fill(color=(255,0,0), rect=(xx,0,1,SCREEN_HEIGHT))
+
+        # for yy in range(y_offset_int, SCREEN_HEIGHT, CELL_SIZE*MAP_SIZE):
+        #     self.screen.fill(color=(0,255,0), rect=(0,yy,SCREEN_WIDTH,1))
+
         # self.x_offset += X_SPEED * sec
         # self.y_offset += Y_SPEED * sec
         # self.x_offset %= SCREEN_WIDTH
