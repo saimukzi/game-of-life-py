@@ -121,10 +121,12 @@ try:
     logging.info('Kill GOL')
     gol_process_data_path = os.path.join(WORK_PATH, 'gol_process_data.json')
     gol_process_data = common.read_json(gol_process_data_path)
-    gol_process_pid = gol_process_data['PID']
-    gol_process = common.psutil.Process(gol_process_pid)
-    gol_process.kill()
-    gol_process.wait(timeout=30)
+    gol_process_data0 = common.get_process_data(gol_process_data['PID'])
+    if gol_process_data == gol_process_data0:
+        gol_process_pid = gol_process_data['PID']
+        gol_process = common.psutil.Process(gol_process_pid)
+        gol_process.kill()
+        gol_process.wait(timeout=30)
 except Exception as e:
     logging.exception(e)
 
@@ -133,10 +135,12 @@ try:
     logging.info('Kill OBS')
     obs_process_data_path = os.path.join(WORK_PATH, 'obs_process_data.json')
     obs_process_data = common.read_json(obs_process_data_path)
-    obs_process_pid = obs_process_data['PID']
-    obs_process = common.psutil.Process(obs_process_pid)
-    obs_process.kill()
-    obs_process.wait(timeout=30)
+    obs_process_data0 = common.get_process_data(obs_process_data['PID'])
+    if obs_process_data == obs_process_data0:
+        obs_process_pid = obs_process_data['PID']
+        obs_process = common.psutil.Process(obs_process_pid)
+        obs_process.kill()
+        obs_process.wait(timeout=30)
 except Exception as e:
     logging.exception(e)
 
