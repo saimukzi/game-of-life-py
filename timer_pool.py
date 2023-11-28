@@ -33,6 +33,8 @@ class TimerPool:
             next_sec = min(next_sec)
 
             now_sec = time.time()
+
+            if not self.running: break
             time.sleep(max(next_sec-now_sec,0))
 
     def stop(self):
