@@ -1,6 +1,7 @@
+USE_CUPY = False
+
 import common
-import concurrent
-import cupy as cp
+import concurrent.futures
 import freq_timer
 import numpy as np
 import os
@@ -10,6 +11,18 @@ import threading
 import time
 import timer_pool
 import traceback
+
+if USE_CUPY:
+    import cupy as cp
+    xp = cp
+else:
+    xp = np
+
+def xp_to_np(xp_array):
+    if USE_CUPY:
+        return xp.asnumpy(xp_array)
+    else:
+        return xp_array
 
 FPS = 30
 TPS = 10
@@ -75,51 +88,51 @@ class Runtime:
 
     def gol_run(self):
         try:
-            my_gol_cp = cp.random.randint(0,2,(MAP_SIZE,MAP_SIZE), dtype=cp.uint8)
+            my_gol_xp = xp.random.randint(0,2,(MAP_SIZE,MAP_SIZE), dtype=xp.uint8)
             t = time.time()
-            # my_gol_cp = cp.zeros((MAP_SIZE,MAP_SIZE), dtype=cp.uint8)
-            # my_gol_cp[49,50] = 1
-            # my_gol_cp[50,49] = 1
-            # my_gol_cp[50,50] = 1
-            # my_gol_cp[50,51] = 1
-            # my_gol_cp[51,51] = 1
+            # my_gol_xp = xp.zeros((MAP_SIZE,MAP_SIZE), dtype=xp.uint8)
+            # my_gol_xp[49,50] = 1
+            # my_gol_xp[50,49] = 1
+            # my_gol_xp[50,50] = 1
+            # my_gol_xp[50,51] = 1
+            # my_gol_xp[51,51] = 1
             while self.is_continue():
-                my_gol_cp0 = cp.zeros((MAP_SIZE+2,MAP_SIZE+2), dtype=cp.uint8)
-                my_gol_cp0[1:-1,1:-1] = my_gol_cp
-                my_gol_cp0[0,1:-1] = my_gol_cp[-1,:]
-                my_gol_cp0[-1,1:-1] = my_gol_cp[0,:]
-                my_gol_cp0[1:-1,0] = my_gol_cp[:,-1]
-                my_gol_cp0[1:-1,-1] = my_gol_cp[:,0]
-                my_gol_cp0[0,0] = my_gol_cp[-1,-1]
-                my_gol_cp0[0,-1] = my_gol_cp[-1,0]
-                my_gol_cp0[-1,0] = my_gol_cp[0,-1]
-                my_gol_cp0[-1,-1] = my_gol_cp[0,0]
-                my_gol_cp1 = cp.zeros((MAP_SIZE,MAP_SIZE), dtype=cp.uint8)
-                # my_gol_cp1[:,:] = my_gol_cp
+                my_gol_xp0 = xp.zeros((MAP_SIZE+2,MAP_SIZE+2), dtype=xp.uint8)
+                my_gol_xp0[1:-1,1:-1] = my_gol_xp
+                my_gol_xp0[0,1:-1] = my_gol_xp[-1,:]
+                my_gol_xp0[-1,1:-1] = my_gol_xp[0,:]
+                my_gol_xp0[1:-1,0] = my_gol_xp[:,-1]
+                my_gol_xp0[1:-1,-1] = my_gol_xp[:,0]
+                my_gol_xp0[0,0] = my_gol_xp[-1,-1]
+                my_gol_xp0[0,-1] = my_gol_xp[-1,0]
+                my_gol_xp0[-1,0] = my_gol_xp[0,-1]
+                my_gol_xp0[-1,-1] = my_gol_xp[0,0]
+                my_gol_xp1 = xp.zeros((MAP_SIZE,MAP_SIZE), dtype=xp.uint8)
+                # my_gol_xp1[:,:] = my_gol_xp
                 for i in range(-1,2):
                     for j in range(-1,2):
                         if i==0 and j==0: continue
-                        my_gol_cp1 += my_gol_cp0[1+i:MAP_SIZE+1+i,1+j:MAP_SIZE+1+j]
-                my_gol_cp1 *= 2
-                my_gol_cp1 += my_gol_cp
-                my_gol_cp5 =  my_gol_cp1 >= 5
-                my_gol_cp7 =  my_gol_cp1 <= 7
-                my_gol_cp = my_gol_cp5 * my_gol_cp7
+                        my_gol_xp1 += my_gol_xp0[1+i:MAP_SIZE+1+i,1+j:MAP_SIZE+1+j]
+                my_gol_xp1 *= 2
+                my_gol_xp1 += my_gol_xp
+                my_gol_xp5 =  my_gol_xp1 >= 5
+                my_gol_xp7 =  my_gol_xp1 <= 7
+                my_gol_xp = my_gol_xp5 * my_gol_xp7
 
                 if random.random() < RANDOM_FLIP_CHANCE:
                     hori = random.randint(0,1)
                     i = random.randint(0,MAP_SIZE-1)
                     if hori == 0:
-                        my_gol_cp[(i+0)%MAP_SIZE,:] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
-                        # my_gol_cp[(i+1)%MAP_SIZE,:] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
-                        # my_gol_cp[(i+2)%MAP_SIZE,:] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
+                        my_gol_xp[(i+0)%MAP_SIZE,:] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
+                        # my_gol_xp[(i+1)%MAP_SIZE,:] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
+                        # my_gol_xp[(i+2)%MAP_SIZE,:] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
                     else:
-                        my_gol_cp[:,(i+0)%MAP_SIZE] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
-                        # my_gol_cp[:,(i+1)%MAP_SIZE] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
-                        # my_gol_cp[:,(i+2)%MAP_SIZE] = cp.random.randint(0,2,MAP_SIZE, dtype=cp.uint8)
+                        my_gol_xp[:,(i+0)%MAP_SIZE] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
+                        # my_gol_xp[:,(i+1)%MAP_SIZE] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
+                        # my_gol_xp[:,(i+2)%MAP_SIZE] = xp.random.randint(0,2,MAP_SIZE, dtype=xp.uint8)
 
                 with self.lock:
-                    self.gol_np = cp.asnumpy(my_gol_cp)
+                    self.gol_np = xp_to_np(my_gol_xp)
                 
                 self.last_gol_t = time.time()
 
