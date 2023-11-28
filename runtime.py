@@ -42,11 +42,13 @@ class Runtime:
         # self.gol_np = np.random.randint(0,2,(MAP_SIZE,MAP_SIZE), dtype=np.uint8)
         # self.x_offset = 0
         # self.y_offset = 0
+        self.last_gol_t = None
 
         self.map_surface = pygame.Surface((MAP_SIZE*CELL_SIZE,MAP_SIZE*CELL_SIZE))
         self.map_surface.fill((255,255,255))
 
-        self.exit_done = False
+        self.gol_run_exit_done = False
+        self.run_exit_done = False
 
     def run(self):
         try:
@@ -55,6 +57,7 @@ class Runtime:
             self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT),flags=0)
             pygame.display.set_caption('Conway\'s Game of Life')
 
+            self.last_gol_t = time.time()
             self.thread_pool.submit(self.gol_run)
 
             t0 = time.time()
@@ -63,12 +66,12 @@ class Runtime:
 
             self.timer_pool.run()
 
-            self.exit_done = True
+            self.run_exit_done = True
         except:
-            self.exit_done = True
+            self.run_exit_done = True
             raise
         finally:
-            self.exit_done = True
+            self.run_exit_done = True
 
     def gol_run(self):
         try:
@@ -80,7 +83,7 @@ class Runtime:
             # my_gol_cp[50,50] = 1
             # my_gol_cp[50,51] = 1
             # my_gol_cp[51,51] = 1
-            while not self.exit_done:
+            while self.is_continue():
                 my_gol_cp0 = cp.zeros((MAP_SIZE+2,MAP_SIZE+2), dtype=cp.uint8)
                 my_gol_cp0[1:-1,1:-1] = my_gol_cp
                 my_gol_cp0[0,1:-1] = my_gol_cp[-1,:]
@@ -118,15 +121,22 @@ class Runtime:
                 with self.lock:
                     self.gol_np = cp.asnumpy(my_gol_cp)
                 
+                self.last_gol_t = time.time()
+
                 tdiff = max(0,t + 1/TPS - t)
                 time.sleep(tdiff)
                 t += tdiff
         except:
             traceback.print_exc()
+        self.gol_run_exit_done = True
 
 
     def screen_tick(self, sec):
         # self.screen.fill((255,255,255))
+
+        if not self.is_continue():
+            self.timer_pool.stop()
+            return
 
         with self.lock:
             my_gol_np = self.gol_np
@@ -184,9 +194,21 @@ class Runtime:
         pygame.display.flip()
 
     def event_tick(self, sec):
+        if not self.is_continue():
+            self.timer_pool.stop()
+            return
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.timer_pool.stop()
+
+    def is_continue(self):
+        try:
+            if self.gol_run_exit_done: return False
+            if self.run_exit_done: return False
+            if time.time() - self.last_gol_t > 60: return False
+        except:
+            return False
+        return True
 
 instance = None
 
