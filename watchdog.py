@@ -39,6 +39,10 @@ if not config.get('ENABLE', True):
     logging.info('Watchdog disabled')
     exit()
 
+if not config.get('ENABLE_WATCHDOG', True):
+    logging.info('Watchdog disabled')
+    exit()
+
 # check watchdog start-end time
 try:
     for _hglgyfpapj in range(1):

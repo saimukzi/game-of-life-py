@@ -25,6 +25,9 @@ os.makedirs(WORK_PATH, exist_ok=True)
 if not config.get('ENABLE', True):
     exit()
 
+if not config.get('ENABLE_LAUNCH', True):
+    exit()
+
 # log launch start time
 launch_start_timestamp_path = os.path.join(WORK_PATH, 'launch_start_timestamp.txt')
 common.write_str(launch_start_timestamp_path, str(NOW))
